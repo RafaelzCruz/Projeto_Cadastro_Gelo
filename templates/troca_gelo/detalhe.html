@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalhes da Troca - {{ troca.numero_pedido }}{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto">
+    <!-- Botão Voltar -->
+    <div class="mb-6">
+        <a href="{% url 'troca_gelo_lista' %}" 
+           class="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Voltar para Lista
+        </a>
+    </div>
+
+    <!-- Card Principal -->
+    <div class="bg-white rounded-2xl shadow-xl p-8">
+        <!-- Cabeçalho -->
+        <div class="border-b border-gray-200 pb-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">
+                        Pedido: {{ troca.numero_pedido }}
+                    </h2>
+                    <p class="text-gray-600">
+                        <i class="fas fa-calendar mr-2"></i>
+                        Registrado em {{ troca.criado_em|date:"d/m/Y às H:i" }}
+                    </p>
+                </div>
+                
+                <!-- Badge de Status -->
+                <div>
+                    {% if troca.temperaturas_validas %}
+                    <span class="px-4 py-2 inline-flex text-base leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        Temperaturas Conformes
+                    </span>
+                    {% else %}
+                    <span class="px-4 py-2 inline-flex text-base leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        Temperaturas Fora da Faixa
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Informações Gerais -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Modelo da Caixa -->
+            <div class="bg-blue-50 rounded-xl p-6 border-2 border-blue-200">
+                <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                    <i class="fas fa-box text-blue-600 mr-2"></i>
+                    Modelo da Caixa
+                </h3>
+                <p class="text-gray-700">{{ troca.get_modelo_caixa_display }}</p>
+            </div>
+
+            <!-- Data de Embalagem -->
+            <div class="bg-green-50 rounded-xl p-6 border-2 border-green-200">
+                <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                    <i class="fas fa-calendar-alt text-green-600 mr-2"></i>
+                    Data da Embalagem
+                </h3>
+                <p class="text-gray-700">{{ troca.data_embalagem|date:"d/m/Y" }}</p>
+            </div>
+        </div>
+
+        <!-- Temperaturas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Temperatura do Medicamento -->
+            <div class="bg-gradient-to-br from-red-50 to-pink-50 rounded-xl p-6 border-2 {% if troca.validar_temperatura_medicamento %}border-green-300{% else %}border-red-300{% endif %}">
+                <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                    <i class="fas fa-thermometer-half {% if troca.validar_temperatura_medicamento %}text-green-600{% else %}text-red-600{% endif %} mr-2"></i>
+                    Temperatura do Medicamento
+                </h3>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-3xl font-bold {% if troca.validar_temperatura_medicamento %}text-green-600{% else %}text-red-600{% endif %}">
+                            {{ troca.temperatura_medicamento }}°C
+                        </p>
+                        <p class="text-sm text-gray-600 mt-1">
+                            Faixa esperada: {{ troca.faixa_temperatura_medicamento }}
+                        </p>
+                    </div>
+                    <div>
+                        {% if troca.validar_temperatura_medicamento %}
+                        <i class="fas fa-check-circle text-green-600 text-4xl"></i>
+                        {% else %}
+                        <i class="fas fa-times-circle text-red-600 text-4xl"></i>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Temperatura do Gelo -->
+            <div class="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-xl p-6 border-2 {% if troca.validar_temperatura_gelo %}border-green-300{% else %}border-red-300{% endif %}">
+                <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                    <i class="fas fa-snowflake {% if troca.validar_temperatura_gelo %}text-green-600{% else %}text-red-600{% endif %} mr-2"></i>
+                    Temperatura do Gelo
+                </h3>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-3xl font-bold {% if troca.validar_temperatura_gelo %}text-green-600{% else %}text-red-600{% endif %}">
+                            {{ troca.temperatura_gelo }}°C
+                        </p>
+                        <p class="text-sm text-gray-600 mt-1">
+                            Faixa esperada: -5,0°C até -9,0°C
+                        </p>
+                    </div>
+                    <div>
+                        {% if troca.validar_temperatura_gelo %}
+                        <i class="fas fa-check-circle text-green-600 text-4xl"></i>
+                        {% else %}
+                        <i class="fas fa-times-circle text-red-600 text-4xl"></i>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Período de Ambientação -->
+        <div class="bg-indigo-50 rounded-xl p-6 border-2 border-indigo-200 mb-8">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                <i class="fas fa-clock text-indigo-600 mr-2"></i>
+                Período de Ambientação
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <p class="text-sm text-gray-600 mb-1">Início da Ambientação</p>
+                    <p class="text-lg font-semibold text-gray-800">
+                        {{ troca.hora_inicio_ambientacao|date:"H:i" }}
+                    </p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600 mb-1">Finalização</p>
+                    <p class="text-lg font-semibold text-gray-800">
+                        {{ troca.hora_finalizacao|date:"H:i" }}
+                    </p>
+                </div>
+            </div>
+            <div class="mt-3 p-3 bg-white rounded-lg">
+                <p class="text-sm text-gray-600">
+                    <i class="fas fa-info-circle text-indigo-600 mr-2"></i>
+                    Período de ambientação: 20 minutos (calculado automaticamente)
+                </p>
+            </div>
+        </div>
+
+        <!-- Galeria de Fotos -->
+        <div class="mb-8">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                <i class="fas fa-images text-purple-600 mr-3"></i>
+                Galeria de Fotos
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Foto da Etiqueta -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-gray-200 hover:border-blue-400 transition">
+                    <div class="bg-gradient-to-r from-yellow-500 to-orange-500 px-4 py-3">
+                        <h4 class="text-white font-semibold flex items-center">
+                            <i class="fas fa-tag mr-2"></i>
+                            Etiqueta da Caixa
+                        </h4>
+                    </div>
+                    <div class="p-4">
+                        {% if troca.foto_etiqueta %}
+                        <a href="{{ troca.foto_etiqueta.url }}" target="_blank" class="block group">
+                            <img src="{{ troca.foto_etiqueta.url }}" 
+                                 alt="Foto da Etiqueta" 
+                                 class="w-full h-64 object-cover rounded-lg group-hover:opacity-75 transition">
+                            <p class="text-center text-sm text-blue-600 mt-2 group-hover:underline">
+                                <i class="fas fa-external-link-alt mr-1"></i>
+                                Ampliar
+                            </p>
+                        </a>
+                        {% else %}
+                        <div class="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-image text-gray-400 text-4xl"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Foto Temperatura do Medicamento -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-gray-200 hover:border-blue-400 transition">
+                    <div class="bg-gradient-to-r from-red-500 to-pink-500 px-4 py-3">
+                        <h4 class="text-white font-semibold flex items-center">
+                            <i class="fas fa-thermometer-half mr-2"></i>
+                            Temp. Medicamento
+                        </h4>
+                    </div>
+                    <div class="p-4">
+                        {% if troca.foto_temperatura_medicamento %}
+                        <a href="{{ troca.foto_temperatura_medicamento.url }}" target="_blank" class="block group">
+                            <img src="{{ troca.foto_temperatura_medicamento.url }}" 
+                                 alt="Foto Temperatura Medicamento" 
+                                 class="w-full h-64 object-cover rounded-lg group-hover:opacity-75 transition">
+                            <p class="text-center text-sm text-blue-600 mt-2 group-hover:underline">
+                                <i class="fas fa-external-link-alt mr-1"></i>
+                                Ampliar
+                            </p>
+                        </a>
+                        {% else %}
+                        <div class="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-image text-gray-400 text-4xl"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Foto Temperatura do Gelo -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-gray-200 hover:border-blue-400 transition">
+                    <div class="bg-gradient-to-r from-cyan-500 to-blue-500 px-4 py-3">
+                        <h4 class="text-white font-semibold flex items-center">
+                            <i class="fas fa-snowflake mr-2"></i>
+                            Temp. Gelo
+                        </h4>
+                    </div>
+                    <div class="p-4">
+                        {% if troca.foto_temperatura_gelo %}
+                        <a href="{{ troca.foto_temperatura_gelo.url }}" target="_blank" class="block group">
+                            <img src="{{ troca.foto_temperatura_gelo.url }}" 
+                                 alt="Foto Temperatura Gelo" 
+                                 class="w-full h-64 object-cover rounded-lg group-hover:opacity-75 transition">
+                            <p class="text-center text-sm text-blue-600 mt-2 group-hover:underline">
+                                <i class="fas fa-external-link-alt mr-1"></i>
+                                Ampliar
+                            </p>
+                        </a>
+                        {% else %}
+                        <div class="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-image text-gray-400 text-4xl"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informações Adicionais -->
+        {% if troca.usuario %}
+        <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                <i class="fas fa-user text-gray-600 mr-2"></i>
+                Informações Adicionais
+            </h3>
+            <p class="text-gray-700">
+                <strong>Usuário:</strong> {{ troca.usuario }}
+            </p>
+            {% if troca.atualizado_em != troca.criado_em %}
+            <p class="text-gray-700 mt-2">
+                <strong>Última atualização:</strong> {{ troca.atualizado_em|date:"d/m/Y às H:i" }}
+            </p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Botões de Ação -->
+        <div class="mt-8 flex gap-4">
+            <a href="{% url 'troca_gelo_lista' %}" 
+               class="flex-1 bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-xl hover:bg-gray-300 transition text-center">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Voltar para Lista
+            </a>
+            
+            <a href="{% url 'troca_gelo_form' %}" 
+               class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-3 px-6 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition text-center">
+                <i class="fas fa-plus-circle mr-2"></i>
+                Nova Troca
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

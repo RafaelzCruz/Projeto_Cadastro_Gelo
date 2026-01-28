@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Troca Registrada com Sucesso{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto text-center">
+    <div class="bg-white rounded-2xl shadow-xl p-12">
+        <!-- Ícone de Sucesso -->
+        <div class="mb-6">
+            <div class="inline-flex items-center justify-center w-24 h-24 bg-green-100 rounded-full animate-bounce">
+                <i class="fas fa-check-circle text-green-600 text-5xl"></i>
+            </div>
+        </div>
+        
+        <!-- Mensagem de Sucesso -->
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">
+            Troca de Gelo Registrada com Sucesso!
+        </h2>
+        
+        <p class="text-gray-600 text-lg mb-8">
+            O formulário de troca de gelo foi concluído e registrado no sistema.
+            O período de ambientação foi calculado automaticamente.
+        </p>
+        
+        <!-- Informações Adicionais -->
+        <div class="bg-blue-50 rounded-xl p-6 mb-8 text-left">
+            <h3 class="font-semibold text-gray-800 mb-3 flex items-center">
+                <i class="fas fa-info-circle text-blue-600 mr-2"></i>
+                Informações Importantes
+            </h3>
+            <ul class="space-y-2 text-sm text-gray-700">
+                <li class="flex items-start">
+                    <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+                    <span>Todas as fotos foram enviadas e armazenadas com segurança</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+                    <span>As temperaturas foram validadas dentro das faixas permitidas</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+                    <span>O período de ambientação (20 minutos) foi registrado automaticamente</span>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Botões de Ação -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'troca_gelo_form' %}" 
+               class="inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-3 px-8 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition duration-300 shadow-lg hover:shadow-xl">
+                <i class="fas fa-plus-circle mr-2"></i>
+                Registrar Nova Troca
+            </a>
+            
+            <a href="{% url 'troca_gelo_lista' %}" 
+               class="inline-flex items-center justify-center bg-gray-200 text-gray-700 font-semibold py-3 px-8 rounded-xl hover:bg-gray-300 transition duration-300">
+                <i class="fas fa-list mr-2"></i>
+                Ver Histórico
+            </a>
+        </div>
+        
+        <!-- Tempo de Redirecionamento -->
+        <div class="mt-8 text-sm text-gray-500" x-data="{ countdown: 10 }" x-init="setInterval(() => { if(countdown > 0) countdown--; else window.location.href='{% url 'troca_gelo_form' %}' }, 1000)">
+            <p>
+                <i class="fas fa-clock mr-2"></i>
+                Redirecionando para nova troca em <span x-text="countdown"></span> segundos...
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

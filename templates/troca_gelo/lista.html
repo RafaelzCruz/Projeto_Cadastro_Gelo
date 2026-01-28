@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+
+{% block title %}Histórico de Trocas de Gelo{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Cabeçalho -->
+    <div class="bg-white rounded-2xl shadow-xl p-6 mb-6">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">Histórico de Trocas</h2>
+                <p class="text-gray-600">Visualize todos os registros de troca de gelo</p>
+            </div>
+            <a href="{% url 'troca_gelo_form' %}" 
+               class="mt-4 md:mt-0 inline-flex items-center bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-3 px-6 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition duration-300 shadow-lg">
+                <i class="fas fa-plus-circle mr-2"></i>
+                Nova Troca
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="bg-white rounded-2xl shadow-xl p-6 mb-6">
+        <form method="get" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Modelo da Caixa</label>
+                <select name="modelo" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    <option value="">Todos os modelos</option>
+                    <option value="12L_IF2000">12L IF-2.000</option>
+                    <option value="12L_IT1050">12L IT-1050</option>
+                    <option value="33L_IF1050">33L IF-1050 PRECAUÇÃO</option>
+                    <option value="44L_IT1050">44L IT-1050</option>
+                    <option value="80L_IT1050">80L IT-1050</option>
+                    <option value="120L_IT1050">120L IT-1050</option>
+                </select>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Data Início</label>
+                <input type="date" name="data_inicio" 
+                       class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Data Fim</label>
+                <input type="date" name="data_fim" 
+                       class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+            </div>
+            
+            <div class="md:col-span-3 flex gap-3">
+                <button type="submit" 
+                        class="flex-1 md:flex-none bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-blue-700 transition">
+                    <i class="fas fa-search mr-2"></i>
+                    Filtrar
+                </button>
+                <a href="{% url 'troca_gelo_lista' %}" 
+                   class="flex-1 md:flex-none bg-gray-200 text-gray-700 font-semibold py-2 px-6 rounded-lg hover:bg-gray-300 transition text-center">
+                    <i class="fas fa-redo mr-2"></i>
+                    Limpar
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tabela de Trocas -->
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+        {% if trocas %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gradient-to-r from-blue-600 to-indigo-600">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                            Pedido
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                            Modelo
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                            Data Embalagem
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                            Temp. Medicamento
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                            Temp. Gelo
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                            Status
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                            Ações
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for troca in trocas %}
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">{{ troca.numero_pedido }}</div>
+                            <div class="text-xs text-gray-500">{{ troca.criado_em|date:"d/m/Y H:i" }}</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="text-sm text-gray-900">{{ troca.get_modelo_caixa_display|truncatewords:3 }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ troca.data_embalagem|date:"d/m/Y" }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                {% if troca.validar_temperatura_medicamento %}
+                                <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                                {% else %}
+                                <i class="fas fa-exclamation-circle text-red-600 mr-2"></i>
+                                {% endif %}
+                                <span class="text-sm {% if troca.validar_temperatura_medicamento %}text-green-600{% else %}text-red-600{% endif %} font-semibold">
+                                    {{ troca.temperatura_medicamento }}°C
+                                </span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                {% if troca.validar_temperatura_gelo %}
+                                <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                                {% else %}
+                                <i class="fas fa-exclamation-circle text-red-600 mr-2"></i>
+                                {% endif %}
+                                <span class="text-sm {% if troca.validar_temperatura_gelo %}text-green-600{% else %}text-red-600{% endif %} font-semibold">
+                                    {{ troca.temperatura_gelo }}°C
+                                </span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% if troca.temperaturas_validas %}
+                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                <i class="fas fa-check mr-1"></i>
+                                Conforme
+                            </span>
+                            {% else %}
+                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                <i class="fas fa-times mr-1"></i>
+                                Fora da faixa
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <a href="{% url 'troca_gelo_detalhe' troca.pk %}" 
+                               class="text-blue-600 hover:text-blue-900 font-medium">
+                                <i class="fas fa-eye mr-1"></i>
+                                Ver Detalhes
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginação -->
+        {% if is_paginated %}
+        <div class="bg-gray-50 px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+            <div class="flex-1 flex justify-between sm:hidden">
+                {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}" 
+                   class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                    Anterior
+                </a>
+                {% endif %}
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" 
+                   class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                    Próxima
+                </a>
+                {% endif %}
+            </div>
+            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-sm text-gray-700">
+                        Mostrando <span class="font-medium">{{ page_obj.start_index }}</span> a 
+                        <span class="font-medium">{{ page_obj.end_index }}</span> de 
+                        <span class="font-medium">{{ page_obj.paginator.count }}</span> registros
+                    </p>
+                </div>
+                <div>
+                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                        {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}" 
+                           class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                        {% endif %}
+                        
+                        <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                        </span>
+                        
+                        {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}" 
+                           class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                        {% endif %}
+                    </nav>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% else %}
+        <!-- Mensagem de lista vazia -->
+        <div class="text-center py-12">
+            <i class="fas fa-inbox text-gray-400 text-6xl mb-4"></i>
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">Nenhuma troca registrada</h3>
+            <p class="text-gray-600 mb-6">Comece registrando sua primeira troca de gelo</p>
+            <a href="{% url 'troca_gelo_form' %}" 
+               class="inline-flex items-center bg-blue-600 text-white font-semibold py-3 px-6 rounded-xl hover:bg-blue-700 transition">
+                <i class="fas fa-plus-circle mr-2"></i>
+                Registrar Primeira Troca
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

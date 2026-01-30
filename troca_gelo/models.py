@@ -101,7 +101,9 @@ class TrocaGelo(models.Model):
     def save(self, *args, **kwargs):
         # Calcula automaticamente o horário de início da ambientação (20 minutos antes)
         if not self.hora_inicio_ambientacao:
-            self.hora_inicio_ambientacao = self.hora_finalizacao - timedelta(minutes=20)
+            # Se hora_finalizacao ainda não foi definida (primeiro save), usa o horário atual
+            horario_referencia = self.hora_finalizacao or timezone.now()
+            self.hora_inicio_ambientacao = horario_referencia - timedelta(minutes=20)
         super().save(*args, **kwargs)
     
     def __str__(self):

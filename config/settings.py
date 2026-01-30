@@ -121,3 +121,8 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB
 DATE_FORMAT = 'd/m/Y'
 DATETIME_FORMAT = 'd/m/Y H:i'
 SHORT_DATE_FORMAT = 'd/m/Y'
+
+# Configurações de Autenticação
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/login/'

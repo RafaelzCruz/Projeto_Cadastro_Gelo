@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView, ListView, DetailView
 from django.urls import reverse_lazy
 from .models import TrocaGelo
 from .forms import TrocaGeloForm
 
-class TrocaGeloCreateView(CreateView):
+class TrocaGeloCreateView(LoginRequiredMixin, CreateView):
     """View para criar nova troca de gelo"""
     model = TrocaGelo
     form_class = TrocaGeloForm
@@ -32,7 +34,7 @@ class TrocaGeloCreateView(CreateView):
         return super().form_invalid(form)
 
 
-class TrocaGeloListView(ListView):
+class TrocaGeloListView(LoginRequiredMixin, ListView):
     """View para listar todas as trocas de gelo"""
     model = TrocaGelo
     template_name = 'troca_gelo/lista.html'

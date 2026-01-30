@@ -1,48 +1,50 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Troca de Gelo 5S - ONCOPROD/TRANSMEP{% endblock %}</title>
-    
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Alpine.js para interatividade -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
+
     <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
+
         body {
             font-family: 'Inter', sans-serif;
         }
-        
+
         /* Animações customizadas */
         @keyframes slideIn {
             from {
                 opacity: 0;
                 transform: translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-        
+
         .animate-slide-in {
             animation: slideIn 0.3s ease-out;
         }
-        
+
         /* Preview de imagem */
         .image-preview {
             max-height: 200px;
             object-fit: cover;
         }
-        
+
         /* Estilo para input de arquivo */
         input[type="file"]::file-selector-button {
             margin-right: 20px;
@@ -54,14 +56,15 @@
             cursor: pointer;
             transition: background 0.2s ease-in-out;
         }
-        
+
         input[type="file"]::file-selector-button:hover {
             background: #2563eb;
         }
     </style>
-    
+
     {% block extra_css %}{% endblock %}
 </head>
+
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
     <!-- Header -->
     <header class="bg-white shadow-md">
@@ -71,16 +74,19 @@
                     <i class="fas fa-snowflake text-blue-600 text-3xl"></i>
                     <div>
                         <a href="{% url 'troca_gelo_form' %}">
-                        <h1 class="text-2xl font-bold text-gray-800">Troca de Gelo 5S</h1>
-                        <p class="text-sm text-gray-600">ONCOPROD / TRANSMEP</p>
+                            <h1 class="text-2xl font-bold text-gray-800">Troca de Gelo 5S</h1>
+                            <p class="text-sm text-gray-600">ONCOPROD / TRANSMEP</p>
+                            <p>VANDERSON</p>
                         </a>
                     </div>
                 </div>
                 <nav class="hidden md:flex space-x-4">
-                    <a href="{% url 'troca_gelo_form' %}" class="px-4 py-2 text-gray-700 hover:text-blue-600 transition">
+                    <a href="{% url 'troca_gelo_form' %}"
+                        class="px-4 py-2 text-gray-700 hover:text-blue-600 transition">
                         <i class="fas fa-plus-circle mr-2"></i>Nova Troca
                     </a>
-                    <a href="{% url 'troca_gelo_lista' %}" class="px-4 py-2 text-gray-700 hover:text-blue-600 transition">
+                    <a href="{% url 'troca_gelo_lista' %}"
+                        class="px-4 py-2 text-gray-700 hover:text-blue-600 transition">
                         <i class="fas fa-list mr-2"></i>Histórico
                     </a>
                 </nav>
@@ -92,7 +98,8 @@
     {% if messages %}
     <div class="container mx-auto px-4 mt-4">
         {% for message in messages %}
-        <div class="animate-slide-in bg-{% if message.tags == 'error' %}red{% elif message.tags == 'success' %}green{% else %}blue{% endif %}-100 border border-{% if message.tags == 'error' %}red{% elif message.tags == 'success' %}green{% else %}blue{% endif %}-400 text-{% if message.tags == 'error' %}red{% elif message.tags == 'success' %}green{% else %}blue{% endif %}-700 px-4 py-3 rounded-lg relative mb-4" role="alert">
+        <div class="animate-slide-in bg-{% if message.tags == 'error' %}red{% elif message.tags == 'success' %}green{% else %}blue{% endif %}-100 border border-{% if message.tags == 'error' %}red{% elif message.tags == 'success' %}green{% else %}blue{% endif %}-400 text-{% if message.tags == 'error' %}red{% elif message.tags == 'success' %}green{% else %}blue{% endif %}-700 px-4 py-3 rounded-lg relative mb-4"
+            role="alert">
             <span class="block sm:inline">{{ message }}</span>
             <button onclick="this.parentElement.remove()" class="absolute top-0 bottom-0 right-0 px-4 py-3">
                 <i class="fas fa-times"></i>
@@ -120,4 +127,5 @@
 
     {% block extra_js %}{% endblock %}
 </body>
+
 </html>

@@ -21,9 +21,55 @@
                 <span class="text-sm font-medium text-gray-700">Progresso</span>
                 <span class="text-sm font-medium text-gray-700" x-text="progressPercentage + '%'"></span>
             </div>
-            <div class="w-full bg-gray-200 rounded-full h-3">
-                <div class="bg-blue-600 h-3 rounded-full transition-all duration-300" 
+            <div class="w-full bg-gray-200 rounded-full h-3 relative overflow-visible mb-8">
+                <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-500 ease-out shadow-sm" 
                      :style="'width: ' + progressPercentage + '%'"></div>
+            </div>
+            
+            <!-- Indicadores de Passos -->
+            <div class="grid grid-cols-6 gap-2 text-xs">
+                <div class="text-center">
+                    <div class="w-8 h-8 mx-auto rounded-full flex items-center justify-center mb-1 transition-all duration-300"
+                         :class="hasModelo ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-600'">
+                        <i :class="hasModelo ? 'fas fa-check' : 'fas fa-box'"></i>
+                    </div>
+                    <span class="text-gray-600">Modelo</span>
+                </div>
+                <div class="text-center">
+                    <div class="w-8 h-8 mx-auto rounded-full flex items-center justify-center mb-1 transition-all duration-300"
+                         :class="hasPedido ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-600'">
+                        <i :class="hasPedido ? 'fas fa-check' : 'fas fa-hashtag'"></i>
+                    </div>
+                    <span class="text-gray-600">Pedido</span>
+                </div>
+                <div class="text-center">
+                    <div class="w-8 h-8 mx-auto rounded-full flex items-center justify-center mb-1 transition-all duration-300"
+                         :class="hasData ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-600'">
+                        <i :class="hasData ? 'fas fa-check' : 'fas fa-calendar'"></i>
+                    </div>
+                    <span class="text-gray-600">Data</span>
+                </div>
+                <div class="text-center">
+                    <div class="w-8 h-8 mx-auto rounded-full flex items-center justify-center mb-1 transition-all duration-300"
+                         :class="hasFotoEtiqueta ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-600'">
+                        <i :class="hasFotoEtiqueta ? 'fas fa-check' : 'fas fa-tag'"></i>
+                    </div>
+                    <span class="text-gray-600">Etiqueta</span>
+                </div>
+                <div class="text-center">
+                    <div class="w-8 h-8 mx-auto rounded-full flex items-center justify-center mb-1 transition-all duration-300"
+                         :class="hasFotoTempMed && hasTempMed ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-600'">
+                        <i :class="hasFotoTempMed && hasTempMed ? 'fas fa-check' : 'fas fa-thermometer-half'"></i>
+                    </div>
+                    <span class="text-gray-600">Temp Med</span>
+                </div>
+                <div class="text-center">
+                    <div class="w-8 h-8 mx-auto rounded-full flex items-center justify-center mb-1 transition-all duration-300"
+                         :class="hasFotoTempGelo && hasTempGelo ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-600'">
+                        <i :class="hasFotoTempGelo && hasTempGelo ? 'fas fa-check' : 'fas fa-snowflake'"></i>
+                    </div>
+                    <span class="text-gray-600">Temp Gelo</span>
+                </div>
             </div>
         </div>
 
@@ -187,7 +233,21 @@
                             {{ form.temperatura_medicamento.label }}
                             <span class="text-red-500">*</span>
                         </label>
-                        {{ form.temperatura_medicamento }}
+                        <div class="relative">
+                            <input 
+                                type="number" 
+                                step="0.1"
+                                name="temperatura_medicamento" 
+                                id="id_temperatura_medicamento"
+                                placeholder="Ex: 5.5"
+                                class="block w-full rounded-lg shadow-sm focus:border-black focus:ring-black py-3 pl-4 pr-10 font-light text-base"
+                                required
+                            >
+
+                            <div class="absolute right-3 inset-y-0 flex items-center pointer-events-none">
+                                <span class="text-gray-400 font-semibold">°C</span>
+                            </div>
+                        </div>
                         <p class="text-xs text-gray-500 mt-1">{{ form.temperatura_medicamento.help_text }}</p>
                         
                         <!-- Validação visual em tempo real -->
@@ -250,26 +310,86 @@
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            {{ form.temperatura_gelo.label }}
+                            Temperatura do Gelo (°C)
                             <span class="text-red-500">*</span>
                         </label>
-                        {{ form.temperatura_gelo }}
-                        <p class="text-xs text-gray-500 mt-1">{{ form.temperatura_gelo.help_text }}</p>
                         
-                        <!-- Validação visual em tempo real -->
-                        <div x-show="tempGelo !== null && tempGelo !== ''" class="mt-2">
-                            <div x-show="isValidTempGelo" class="text-green-600 text-sm flex items-center">
-                                <i class="fas fa-check-circle mr-2"></i>
-                                Temperatura dentro da faixa permitida
+                        <!-- Input customizado com sinal negativo fixo e destacado -->
+                        <div class="relative flex items-center group">
+                            <!-- Sinal negativo fixo e destacado -->
+                            <div class="absolute left-0 inset-y-0 flex items-center justify-center w-12 bg-gray-100 rounded-l-lg pointer-events-none z-10 border border-gray border-r-0 group-focus-within:border-black">
+                                <span class="text-2xl font-bold text-red-600">−</span>
                             </div>
-                            <div x-show="!isValidTempGelo" class="text-red-600 text-sm flex items-center">
-                                <i class="fas fa-exclamation-circle mr-2"></i>
-                                Temperatura fora da faixa permitida!
+                            
+                            <!-- Campo de input - máximo 3 caracteres -->
+                            <input 
+                                type="text" 
+                                name="temperatura_gelo_display"
+                                id="temperatura_gelo_display"
+                                x-model="tempGeloPositivo"
+                                @input="updateTempGelo()"
+                                @keydown="validateKeyDown($event)"
+                                @paste="handlePaste($event)"
+                                inputmode="decimal"
+                                maxlength="3"
+                                placeholder="Ex: 5.5"
+                                class="block w-full rounded-lg shadow-sm focus:border-black focus:ring-black text-base py-3 pl-14 pr-14 font-light text-base"
+                                required
+                                autocomplete="off"
+                            />
+                            
+                            <!-- Campo hidden real que será enviado ao Django -->
+                            <input type="hidden" name="temperatura_gelo" id="temperatura_gelo" x-model="tempGeloReal">
+                            
+                            <!-- Indicador de graus Celsius -->
+                            <div class="absolute right-3 inset-y-0 flex items-center pointer-events-none">
+                                <span class="text-gray-400 font-semibold">°C</span>
                             </div>
                         </div>
                         
+                        <!-- Informações e instruções -->
+                        <div class="mt-2 space-y-1">
+                            <p class="text-xs text-blue-600 flex items-center">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                <strong>Digite apenas de 5.0 até 9.0. (O sinal negativo já está fixo).</strong> 
+                            </p>
+                            
+                            <p class="text-xs text-red-600 font-semibold">
+                                <i class="fas fa-exclamation-triangle mr-1"></i>
+                                Valores abaixo de 5.0 ou acima de 9.0 serão bloqueados!
+                            </p>
+                        </div>
+                        
+                        <!-- Preview do valor que será enviado -->
+                        <div x-show="tempGeloPositivo && tempGeloPositivo !== ''" class="mt-3 p-3 bg-cyan-50 border border-cyan-200 rounded-lg">
+                            <p class="text-sm text-cyan-800 flex items-center">
+                                <i class="fas fa-arrow-right mr-2"></i>
+                                <strong>Valor que será registrado:</strong>
+                                <span class="ml-2 text-lg font-bold text-cyan-600" x-text="tempGeloReal ? tempGeloReal + '°C' : 'Digite um valor válido'"></span>
+                            </p>
+                        </div>
+                        
+                        <!-- Validação visual em tempo real -->
+                        <div x-show="tempGelo !== null && tempGelo !== ''" class="mt-2">
+                            <div x-show="isValidTempGelo" class="text-green-600 text-sm flex items-center bg-green-50 p-2 rounded-lg">
+                                <i class="fas fa-check-circle mr-2 text-lg"></i>
+                                <strong>Temperatura dentro da faixa permitida!</strong>
+                            </div>
+                            <div x-show="!isValidTempGelo" class="text-red-600 text-sm flex items-center bg-red-50 p-2 rounded-lg">
+                                <i class="fas fa-exclamation-circle mr-2 text-lg"></i>
+                                <strong>❌ Atenção! Valor deve estar entre 5.0 e 9.0</strong>
+                            </div>
+                        </div>
+                        
+                        <!-- Mensagem de erro se tentar digitar fora do range -->
+                        <div x-show="showRangeError" x-transition class="mt-2 text-red-600 text-sm flex items-center bg-red-50 p-2 rounded-lg border border-red-300">
+                            <i class="fas fa-ban mr-2 text-lg"></i>
+                            <strong x-text="rangeErrorMessage"></strong>
+                        </div>
+                        
                         {% if form.temperatura_gelo.errors %}
-                        <div class="text-red-600 text-sm mt-1">
+                        <div class="text-red-600 text-sm mt-2 bg-red-50 p-2 rounded-lg border border-red-200">
+                            <i class="fas fa-times-circle mr-1"></i>
                             {{ form.temperatura_gelo.errors }}
                         </div>
                         {% endif %}
@@ -324,9 +444,140 @@
             selectedModel: '',
             tempMedicamento: null,
             tempGelo: null,
+            tempGeloPositivo: '',
+            tempGeloReal: '',
             previewEtiqueta: null,
             previewTempMedicamento: null,
             previewTempGelo: null,
+            // Propriedades reativas para controlar o progresso
+            hasModelo: false,
+            hasPedido: false,
+            hasData: false,
+            hasFotoEtiqueta: false,
+            hasFotoTempMed: false,
+            hasTempMed: false,
+            hasFotoTempGelo: false,
+            hasTempGelo: false,
+            showRangeError: false,
+            rangeErrorMessage: '',
+            
+            // Valida teclas pressionadas
+            validateKeyDown(event) {
+                const key = event.key;
+                const currentValue = this.tempGeloPositivo;
+                
+                // Permite teclas de controle
+                if (['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(key)) {
+                    return true;
+                }
+                
+                // Permite apenas números e ponto
+                if (!/^[0-9.]$/.test(key)) {
+                    event.preventDefault();
+                    return false;
+                }
+                
+                // Permite apenas um ponto
+                if (key === '.' && currentValue.includes('.')) {
+                    event.preventDefault();
+                    return false;
+                }
+                
+                // Limita a 3 caracteres
+                if (currentValue.length >= 3 && !['Backspace', 'Delete'].includes(key)) {
+                    event.preventDefault();
+                    return false;
+                }
+                
+                // Validação do primeiro dígito (deve ser 5-9)
+                if (currentValue.length === 0 && /^[0-9]$/.test(key)) {
+                    const digit = parseInt(key);
+                    if (digit < 5 || digit > 9) {
+                        event.preventDefault();
+                        this.showRangeError = true;
+                        this.rangeErrorMessage = `Primeiro dígito deve ser entre 5 e 9. Você tentou: ${digit}`;
+                        setTimeout(() => { this.showRangeError = false; }, 3000);
+                        return false;
+                    }
+                }
+                
+                return true;
+            },
+            
+            // Trata eventos de colar
+            handlePaste(event) {
+                event.preventDefault();
+                const pastedText = (event.clipboardData || window.clipboardData).getData('text');
+                const cleaned = pastedText.replace(/[^0-9.]/g, '').substring(0, 3);
+                
+                if (cleaned) {
+                    const valor = parseFloat(cleaned);
+                    if (!isNaN(valor) && valor >= 5 && valor <= 9) {
+                        this.tempGeloPositivo = cleaned;
+                        this.updateTempGelo();
+                    } else {
+                        this.showRangeError = true;
+                        this.rangeErrorMessage = 'Valor colado está fora da faixa permitida (5.0 a 9.0)';
+                        setTimeout(() => { this.showRangeError = false; }, 3000);
+                    }
+                }
+            },
+            
+            // Função para atualizar temperatura do gelo
+            updateTempGelo() {
+                if (this.tempGeloPositivo && this.tempGeloPositivo.trim() !== '') {
+                    // Limita a 3 caracteres
+                    if (this.tempGeloPositivo.length > 3) {
+                        this.tempGeloPositivo = this.tempGeloPositivo.substring(0, 3);
+                    }
+                    
+                    // Remove caracteres inválidos (mantém apenas números e um ponto)
+                    let valor = this.tempGeloPositivo.replace(/[^0-9.]/g, '');
+                    
+                    // Garante apenas um ponto decimal
+                    const partes = valor.split('.');
+                    if (partes.length > 2) {
+                        valor = partes[0] + '.' + partes[1];
+                    }
+                    
+                    // Atualiza o valor limpo
+                    this.tempGeloPositivo = valor;
+                    
+                    // Converte para número
+                    let valorPositivo = parseFloat(valor);
+                    
+                    if (!isNaN(valorPositivo)) {
+                        // Valida range 5-9 (SEM ajuste automático)
+                        if (valorPositivo < 5 || valorPositivo > 9) {
+                            this.tempGeloReal = '';
+                            this.tempGelo = null;
+                            this.hasTempGelo = false;
+                            this.showRangeError = true;
+                            this.rangeErrorMessage = `Valor ${valorPositivo} está fora da faixa! Digite entre 5.0 e 9.0`;
+                            setTimeout(() => { this.showRangeError = false; }, 3000);
+                            return;
+                        }
+                        
+                        // Arredonda para 1 casa decimal
+                        valorPositivo = Math.round(valorPositivo * 10) / 10;
+                        
+                        // Converte para negativo para o campo real
+                        this.tempGeloReal = (-valorPositivo).toFixed(1);
+                        this.tempGelo = -valorPositivo;
+                        this.hasTempGelo = true;
+                        this.showRangeError = false;
+                    } else {
+                        this.tempGeloReal = '';
+                        this.tempGelo = null;
+                        this.hasTempGelo = false;
+                    }
+                } else {
+                    this.tempGeloReal = '';
+                    this.tempGelo = null;
+                    this.hasTempGelo = false;
+                    this.showRangeError = false;
+                }
+            },
             
             init() {
                 // Monitora mudanças no modelo da caixa
@@ -334,24 +585,65 @@
                 if (modeloSelect) {
                     modeloSelect.addEventListener('change', (e) => {
                         this.selectedModel = e.target.value;
+                        this.hasModelo = !!e.target.value;
                     });
                     this.selectedModel = modeloSelect.value;
+                    this.hasModelo = !!modeloSelect.value;
                 }
                 
-                // Monitora mudanças nas temperaturas
+                // Monitora número do pedido
+                const numeroPedidoInput = document.querySelector('input[name="numero_pedido"]');
+                if (numeroPedidoInput) {
+                    numeroPedidoInput.addEventListener('input', (e) => {
+                        this.hasPedido = !!e.target.value.trim();
+                    });
+                    this.hasPedido = !!numeroPedidoInput.value.trim();
+                }
+                
+                // Monitora data da embalagem
+                const dataEmbalagemInput = document.querySelector('input[name="data_embalagem"]');
+                if (dataEmbalagemInput) {
+                    dataEmbalagemInput.addEventListener('change', (e) => {
+                        this.hasData = !!e.target.value;
+                    });
+                    this.hasData = !!dataEmbalagemInput.value;
+                }
+                
+                // Monitora foto da etiqueta
+                const fotoEtiquetaInput = document.querySelector('input[name="foto_etiqueta"]');
+                if (fotoEtiquetaInput) {
+                    fotoEtiquetaInput.addEventListener('change', (e) => {
+                        this.hasFotoEtiqueta = e.target.files.length > 0;
+                    });
+                }
+                
+                // Monitora foto temperatura medicamento
+                const fotoTempMedInput = document.querySelector('input[name="foto_temperatura_medicamento"]');
+                if (fotoTempMedInput) {
+                    fotoTempMedInput.addEventListener('change', (e) => {
+                        this.hasFotoTempMed = e.target.files.length > 0;
+                    });
+                }
+                
+                // Monitora temperatura medicamento
                 const tempMedInput = document.querySelector('input[name="temperatura_medicamento"]');
                 if (tempMedInput) {
                     tempMedInput.addEventListener('input', (e) => {
                         this.tempMedicamento = parseFloat(e.target.value);
+                        this.hasTempMed = !!e.target.value;
+                    });
+                    this.hasTempMed = !!tempMedInput.value;
+                }
+                
+                // Monitora foto temperatura gelo
+                const fotoTempGeloInput = document.querySelector('input[name="foto_temperatura_gelo"]');
+                if (fotoTempGeloInput) {
+                    fotoTempGeloInput.addEventListener('change', (e) => {
+                        this.hasFotoTempGelo = e.target.files.length > 0;
                     });
                 }
                 
-                const tempGeloInput = document.querySelector('input[name="temperatura_gelo"]');
-                if (tempGeloInput) {
-                    tempGeloInput.addEventListener('input', (e) => {
-                        this.tempGelo = parseFloat(e.target.value);
-                    });
-                }
+                // Temperatura do gelo agora é gerenciada pela função updateTempGelo() via Alpine.js
                 
                 // Preview de imagens
                 this.setupImagePreview('foto_etiqueta', 'previewEtiqueta');
@@ -384,26 +676,23 @@
                 let completed = 0;
                 const totalSteps = 6;
                 
-                // Verifica cada campo
-                const modeloSelect = document.querySelector('select[name="modelo_caixa"]');
-                if (modeloSelect && modeloSelect.value) completed++;
+                // Passo 1: Modelo da caixa
+                if (this.hasModelo) completed++;
                 
-                const numeroPedido = document.querySelector('input[name="numero_pedido"]');
-                if (numeroPedido && numeroPedido.value) completed++;
+                // Passo 2: Número do pedido
+                if (this.hasPedido) completed++;
                 
-                const dataEmbalagem = document.querySelector('input[name="data_embalagem"]');
-                if (dataEmbalagem && dataEmbalagem.value) completed++;
+                // Passo 3: Data da embalagem
+                if (this.hasData) completed++;
                 
-                const fotoEtiqueta = document.querySelector('input[name="foto_etiqueta"]');
-                if (fotoEtiqueta && fotoEtiqueta.files.length > 0) completed++;
+                // Passo 4: Foto da etiqueta
+                if (this.hasFotoEtiqueta) completed++;
                 
-                const fotoTempMed = document.querySelector('input[name="foto_temperatura_medicamento"]');
-                const tempMed = document.querySelector('input[name="temperatura_medicamento"]');
-                if (fotoTempMed && fotoTempMed.files.length > 0 && tempMed && tempMed.value) completed++;
+                // Passo 5: Foto e temperatura do medicamento
+                if (this.hasFotoTempMed && this.hasTempMed) completed++;
                 
-                const fotoTempGelo = document.querySelector('input[name="foto_temperatura_gelo"]');
-                const tempGelo = document.querySelector('input[name="temperatura_gelo"]');
-                if (fotoTempGelo && fotoTempGelo.files.length > 0 && tempGelo && tempGelo.value) completed++;
+                // Passo 6: Foto e temperatura do gelo
+                if (this.hasFotoTempGelo && this.hasTempGelo) completed++;
                 
                 return Math.round((completed / totalSteps) * 100);
             },
@@ -429,7 +718,8 @@
     // Validação adicional antes do envio
     document.getElementById('trocaGeloForm').addEventListener('submit', function(e) {
         const tempMed = parseFloat(document.querySelector('input[name="temperatura_medicamento"]').value);
-        const tempGelo = parseFloat(document.querySelector('input[name="temperatura_gelo"]').value);
+        const tempGeloInput = document.querySelector('input[name="temperatura_gelo"]');
+        const tempGelo = tempGeloInput ? parseFloat(tempGeloInput.value) : null;
         const modelo = document.querySelector('select[name="modelo_caixa"]').value;
         
         let valid = true;
@@ -449,9 +739,13 @@
         }
         
         // Valida temperatura do gelo
-        if (tempGelo < -9 || tempGelo > -5) {
+        if (!tempGelo || isNaN(tempGelo)) {
+            valid = false;
+            message += 'Por favor, informe a temperatura do gelo.\n';
+        } else if (tempGelo < -9 || tempGelo > -5) {
             valid = false;
             message += 'Temperatura do gelo deve estar entre -5,0°C e -9,0°C.\n';
+            message += `Valor informado: ${tempGelo}°C\n`;
         }
         
         if (!valid) {

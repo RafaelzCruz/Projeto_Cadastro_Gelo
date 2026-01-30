@@ -43,7 +43,6 @@ class TrocaGeloForm(forms.ModelForm):
                 'required': True,
             }),
             'temperatura_medicamento': forms.NumberInput(attrs={
-                'class': 'mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-3 px-4',
                 'step': '0.1',
                 'placeholder': 'Ex: 5.0',
                 'required': True,
@@ -55,7 +54,6 @@ class TrocaGeloForm(forms.ModelForm):
                 'required': True,
             }),
             'temperatura_gelo': forms.NumberInput(attrs={
-                'class': 'mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-3 px-4',
                 'step': '0.1',
                 'placeholder': 'Ex: -7.0',
                 'required': True,
